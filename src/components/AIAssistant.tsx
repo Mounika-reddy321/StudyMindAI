@@ -95,12 +95,83 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     setErrorMessage(null);
   };
 
-  const handleSendMessage = async (textToSend?: string) => {
-    const text = (textToSend || inputPrompt).trim();
-    if (!text || isLoading) return;
+  const formatCleanError = (rawError: any): string => {
+    if (!rawError) return 'An unexpected error occurred. Please try again.';
+    let errStr = typeof rawError === 'string' ? rawError : rawError.message || String(rawError);
+    try {
+      if (errStr.trim().startsWith('{')) {
+        const parsed = JSON.parse(errStr.trim());
+        if (parsed?.error?.message) return parsed.error.message;
+        if (parsed?.error && typeof parsed.error === 'string') return parsed.error;
+        if (parsed?.message) return parsed.message;
+      }
+    } catch {
+      // not JSON
+    }
 
+    if (
+      errStr.includes('503') ||
+      errStr.includes('high demand') ||
+      errStr.includes('UNAVAILABLE') ||
+      errStr.includes('Spikes in demand') ||
+      errStr.includes('spikes in demand')
+    ) {
+      return 'Google Gemini AI servers are currently experiencing temporary high traffic. StudyMind AI automatically tried backup connections. Please click "Retry Question" below in a moment.';
+    }
+
+    return errStr;
+  };
+
+  const sendChatRequest = async (messagesToSend: ChatMessage[]) => {
+    setIsLoading(true);
     setErrorMessage(null);
     setMicError(null);
+
+    const convId = currentConversationId || 'conv_' + Date.now();
+    if (!currentConversationId) {
+      setCurrentConversationId(convId);
+    }
+
+    const title = messagesToSend[0]?.content.slice(0, 42);
+    saveCurrentConversation(convId, messagesToSend, title);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messagesToSend.map((m) => ({ role: m.role, content: m.content })),
+          languageMode,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate study answer.');
+      }
+
+      const assistantMessage: ChatMessage = {
+        id: 'msg_a_' + Date.now(),
+        role: 'assistant',
+        content: data.reply || 'I could not generate an answer at this time. Please try again.',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      const finalMessages = [...messagesToSend, assistantMessage];
+      setMessages(finalMessages);
+      saveCurrentConversation(convId, finalMessages, title);
+    } catch (err: any) {
+      console.error('Chat error:', err);
+      setErrorMessage(formatCleanError(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendMessage = (textToSend?: string) => {
+    const text = (textToSend || inputPrompt).trim();
+    if (!text || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: 'msg_u_' + Date.now(),
@@ -112,50 +183,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInputPrompt('');
-    setIsLoading(true);
-
-    // Save user message immediately to storage
-    const convId = currentConversationId || 'conv_' + Date.now();
-    if (!currentConversationId) {
-      setCurrentConversationId(convId);
-    }
-
-    const title = messages.length === 0 ? text.slice(0, 42) : undefined;
-    saveCurrentConversation(convId, newMessages, title);
-
-    try {
-      // Send conversation history to server
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
-          languageMode,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate study answer.');
-      }
-
-      const assistantMessage: ChatMessage = {
-        id: 'msg_a_' + Date.now(),
-        role: 'assistant',
-        content: data.reply,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-
-      const finalMessages = [...newMessages, assistantMessage];
-      setMessages(finalMessages);
-      saveCurrentConversation(convId, finalMessages, title);
-    } catch (err: any) {
-      console.error('Chat error:', err);
-      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    sendChatRequest(newMessages);
   };
 
   const saveCurrentConversation = (id: string, updatedMessages: ChatMessage[], newTitle?: string) => {
@@ -182,14 +210,19 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
   const handleRegenerate = () => {
     if (messages.length === 0 || isLoading) return;
-    const lastUserIndex = [...messages].reverse().findIndex((m) => m.role === 'user');
-    if (lastUserIndex === -1) return;
+    // Find the last user message index
+    let lastUserIndex = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        lastUserIndex = i;
+        break;
+      }
+    }
 
-    const actualIndex = messages.length - 1 - lastUserIndex;
-    const lastUserPrompt = messages[actualIndex].content;
-    const truncated = messages.slice(0, actualIndex + 1);
-    setMessages(truncated);
-    handleSendMessage(lastUserPrompt);
+    if (lastUserIndex === -1) return;
+    const targetMessages = messages.slice(0, lastUserIndex + 1);
+    setMessages(targetMessages);
+    sendChatRequest(targetMessages);
   };
 
   const handleSpeak = (text: string, id: string) => {
@@ -565,20 +598,31 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           </div>
         )}
 
-        {/* Error notification with retry */}
+        {/* Error notification with friendly explanation and retry */}
         {errorMessage && (
-          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
-              <span>{errorMessage}</span>
+          <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-900 dark:text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-fadeIn">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5 leading-relaxed">
+                <p className="font-bold text-amber-900 dark:text-amber-300">Connection Notice</p>
+                <p className="text-slate-700 dark:text-slate-300">{errorMessage}</p>
+              </div>
             </div>
-            <button
-              onClick={() => handleRegenerate()}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shrink-0 self-start sm:self-auto flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Retry</span>
-            </button>
+            <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="px-3 py-1.5 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-semibold cursor-pointer text-xs transition-colors"
+              >
+                Dismiss
+              </button>
+              <button
+                onClick={handleRegenerate}
+                className="px-3.5 py-1.5 rounded-xl bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white font-bold shrink-0 flex items-center gap-1.5 shadow-xs cursor-pointer transition-all"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Retry Question</span>
+              </button>
+            </div>
           </div>
         )}
 

@@ -109,7 +109,18 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
       setExamActive(true);
     } catch (err: any) {
       console.error('Exam error:', err);
-      setGenerationError(err.message || 'An error occurred while generating questions.');
+      let cleanMsg = err.message || 'An error occurred while generating questions.';
+      try {
+        if (cleanMsg.trim().startsWith('{')) {
+          const parsed = JSON.parse(cleanMsg.trim());
+          if (parsed?.error?.message) cleanMsg = parsed.error.message;
+          else if (parsed?.error) cleanMsg = parsed.error;
+        }
+      } catch {}
+      if (cleanMsg.includes('503') || cleanMsg.includes('high demand') || cleanMsg.includes('UNAVAILABLE')) {
+        cleanMsg = 'Google Gemini servers are temporarily experiencing high traffic. Please wait a moment and try clicking "Start Exam Simulator" again.';
+      }
+      setGenerationError(cleanMsg);
     } finally {
       setIsGenerating(false);
     }

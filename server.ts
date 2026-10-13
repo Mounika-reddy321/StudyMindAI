@@ -67,6 +67,106 @@ Your mission is to make learning crystal clear, structured, and engaging for stu
 - Language style: ${langInstruction}`;
 }
 
+// Helper to detect transient 503 / high demand / rate limit errors
+function isOverloadedOrTransientError(err: any): boolean {
+  if (!err) return false;
+  const status = err.status || err.code || err.statusCode;
+  if (status === 503 || status === 429 || status === 500 || status === 502 || status === 504) return true;
+  const msg = typeof err.message === 'string' ? err.message : JSON.stringify(err);
+  return (
+    msg.includes('503') ||
+    msg.includes('high demand') ||
+    msg.includes('UNAVAILABLE') ||
+    msg.includes('RESOURCE_EXHAUSTED') ||
+    msg.includes('Overloaded') ||
+    msg.includes('Spikes in demand') ||
+    msg.includes('spikes in demand') ||
+    msg.includes('fetch failed') ||
+    msg.includes('ECONNRESET') ||
+    msg.includes('ETIMEDOUT')
+  );
+}
+
+// Helper to extract a human-readable message from potentially nested or JSON errors
+function parseCleanErrorMessage(err: any): string {
+  if (!err) return 'An unexpected error occurred. Please try again.';
+  let msg = err.message || String(err);
+  try {
+    if (typeof msg === 'string' && msg.trim().startsWith('{')) {
+      const parsed = JSON.parse(msg.trim());
+      if (parsed?.error?.message) {
+        msg = parsed.error.message;
+      }
+    }
+  } catch {
+    // ignore json parse failure
+  }
+
+  if (isOverloadedOrTransientError(err) || msg.includes('503') || msg.includes('high demand')) {
+    return 'Google Gemini servers are temporarily experiencing high demand. Automatic backup retries were attempted. Please try sending your question again in a few seconds.';
+  }
+
+  return msg;
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Robust generator with automatic multi-model failover and exponential backoff retry
+async function generateWithFallbackAndRetry(options: {
+  contents: any;
+  config?: any;
+}) {
+  if (!ai) {
+    throw new Error('Gemini API key is not configured on the server. Please ensure GEMINI_API_KEY is set in environment secrets.');
+  }
+
+  // Waterfall priority: Primary (gemini-3.8-flash) -> Latest Flash (gemini-flash-latest) -> High-resilience Lite (gemini-3.1-flash-lite)
+  const CANDIDATE_MODELS = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+  let lastError: any = null;
+
+  for (let i = 0; i < CANDIDATE_MODELS.length; i++) {
+    const model = CANDIDATE_MODELS[i];
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: options.contents,
+        config: options.config,
+      });
+      return response;
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`[Gemini API] Model "${model}" failed:`, err?.message || err);
+
+      if (isOverloadedOrTransientError(err)) {
+        // If there is another candidate model in the chain, switch immediately
+        if (i < CANDIDATE_MODELS.length - 1) {
+          console.log(`[Gemini API] Switching to next fallback model: "${CANDIDATE_MODELS[i + 1]}"...`);
+          await sleep(300);
+          continue;
+        } else {
+          // If the last candidate model encountered high demand, retry once after backoff
+          console.log(`[Gemini API] Retrying last fallback model "${model}" after backoff...`);
+          await sleep(1000);
+          try {
+            return await ai.models.generateContent({
+              model,
+              contents: options.contents,
+              config: options.config,
+            });
+          } catch (retryErr: any) {
+            lastError = retryErr;
+          }
+        }
+      } else {
+        // Fatal non-transient error
+        throw err;
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 // 1. AI Study Assistant Chat Endpoint
 app.post('/api/chat', async (req, res) => {
   try {
@@ -87,8 +187,7 @@ app.post('/api/chat', async (req, res) => {
       parts: [{ text: m.content }],
     }));
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+    const response = await generateWithFallbackAndRetry({
       contents,
       config: {
         systemInstruction: getSystemInstruction(languageMode),
@@ -100,8 +199,13 @@ app.post('/api/chat', async (req, res) => {
     res.json({ reply });
   } catch (error: any) {
     console.error('Chat error:', error);
-    res.status(500).json({
-      error: error?.message || 'An error occurred while communicating with StudyMind AI.',
+    const cleanMessage = parseCleanErrorMessage(error);
+    const isHighDemand = isOverloadedOrTransientError(error);
+
+    res.status(isHighDemand ? 503 : 500).json({
+      error: cleanMessage,
+      isHighDemand,
+      canRetry: true,
     });
   }
 });
@@ -184,8 +288,7 @@ Format the response cleanly with Markdown headings:
 ## ❓ Quick Self-Test Practice Questions (with short answers)
 `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+    const response = await generateWithFallbackAndRetry({
       contents: prompt,
       config: {
         systemInstruction: getSystemInstruction(languageMode),
@@ -196,8 +299,13 @@ Format the response cleanly with Markdown headings:
     res.json({ notes: response.text });
   } catch (error: any) {
     console.error('Notes generation error:', error);
-    res.status(500).json({
-      error: error?.message || 'Failed to generate study notes.',
+    const cleanMessage = parseCleanErrorMessage(error);
+    const isHighDemand = isOverloadedOrTransientError(error);
+
+    res.status(isHighDemand ? 503 : 500).json({
+      error: cleanMessage,
+      isHighDemand,
+      canRetry: true,
     });
   }
 });
@@ -226,8 +334,7 @@ Difficulty: ${difficulty}
 Every question must be pedagogically sound, realistic, and contain exactly 4 options (A, B, C, D).
 Provide the correct option index (0 for A, 1 for B, 2 for C, 3 for D), and a thorough explanation.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+    const response = await generateWithFallbackAndRetry({
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -264,8 +371,13 @@ Provide the correct option index (0 for A, 1 for B, 2 for C, 3 for D), and a tho
     res.json(parsedJson);
   } catch (error: any) {
     console.error('Exam generator error:', error);
-    res.status(500).json({
-      error: error?.message || 'Failed to generate exam questions. Please try again.',
+    const cleanMessage = parseCleanErrorMessage(error);
+    const isHighDemand = isOverloadedOrTransientError(error);
+
+    res.status(isHighDemand ? 503 : 500).json({
+      error: cleanMessage,
+      isHighDemand,
+      canRetry: true,
     });
   }
 });

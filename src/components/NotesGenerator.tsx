@@ -150,7 +150,18 @@ export const NotesGenerator: React.FC<NotesGeneratorProps> = ({ currentUser }) =
       setSavedNotes(StorageService.getSavedNotes(currentUser.id));
     } catch (err: any) {
       console.error('Generation error:', err);
-      setGenerationError(err.message || 'An error occurred while generating notes.');
+      let cleanMsg = err.message || 'An error occurred while generating notes.';
+      try {
+        if (cleanMsg.trim().startsWith('{')) {
+          const parsed = JSON.parse(cleanMsg.trim());
+          if (parsed?.error?.message) cleanMsg = parsed.error.message;
+          else if (parsed?.error) cleanMsg = parsed.error;
+        }
+      } catch {}
+      if (cleanMsg.includes('503') || cleanMsg.includes('high demand') || cleanMsg.includes('UNAVAILABLE')) {
+        cleanMsg = 'Google Gemini servers are temporarily experiencing high traffic. Please wait a moment and try clicking "Generate Academic Notes" again.';
+      }
+      setGenerationError(cleanMsg);
     } finally {
       setIsGenerating(false);
     }
