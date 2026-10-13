@@ -1,0 +1,7 @@
+{
+  "name": "StudyMind AI — Your Personal Study Space",
+  "description": "An all-in-one AI-powered learning platform with smart tutoring, 100 audio stories, notes generator, exam simulator, and live daily news.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
