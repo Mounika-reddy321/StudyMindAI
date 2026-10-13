@@ -15,14 +15,35 @@ import { DailyNews } from './components/DailyNews';
 import { AuthModal } from './components/AuthModal';
 import { StorageService, UserProfile, DEFAULT_USER } from './services/storage';
 
+export type ThemeMode = 'light' | 'dark';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('assistant');
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('studymind_theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [currentUser, setCurrentUser] = useState<UserProfile>(() =>
     StorageService.getCurrentUser()
   );
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isOpenMobile, setIsOpenMobile] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  // Keep dark class on html root and persist preference
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('studymind_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   // Keep Storage current user in sync
   useEffect(() => {
@@ -44,12 +65,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f6fc] text-slate-800 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f0f6fa] dark:bg-[#060d17] text-slate-800 dark:text-slate-100 flex flex-col antialiased transition-colors duration-200">
       {/* Fixed Left Sidebar */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentUser={currentUser}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
         isOpenMobile={isOpenMobile}
@@ -62,6 +85,8 @@ export default function App() {
         <Header
           activeTab={activeTab}
           currentUser={currentUser}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           onOpenMobile={() => setIsOpenMobile(true)}
           onOpenAuth={() => setIsAuthOpen(true)}
         />

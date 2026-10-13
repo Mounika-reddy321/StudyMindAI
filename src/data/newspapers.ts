@@ -52,7 +52,7 @@ export const NEWSPAPERS: Newspaper[] = [
     url: 'https://www.thehindu.com',
     description: "India's premier English broadsheet, renowned for its editorial depth, credible journalism, objective reporting, and extensive use by civil service aspirants.",
     badge: 'National English Broadsheet',
-    tagColor: 'bg-purple-50 text-purple-700 border-purple-200',
+    tagColor: 'bg-sky-50 text-sky-800 border-sky-200',
   },
   {
     id: 'indian-express',

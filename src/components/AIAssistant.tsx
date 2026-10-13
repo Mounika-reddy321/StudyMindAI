@@ -315,50 +315,78 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
   return (
     <div className="flex flex-col h-[calc(100vh-4.5rem)] max-w-5xl mx-auto px-3 sm:px-6 py-4">
-      {/* Assistant Header Card */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-purple-100/90 shadow-xs mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Left Side: Brand and Status */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-700 via-purple-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-purple-600/20 shrink-0">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+      {/* Assistant Header Card with Organized Controls */}
+      <div className="bg-white dark:bg-[#0c1829] rounded-2xl p-4 sm:p-5 border border-sky-100 dark:border-sky-950/80 shadow-xs mb-4 flex flex-col gap-3.5 transition-colors">
+        {/* Row 1: Title and Primary Chat Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-100/80 dark:border-sky-950/60">
+          {/* Brand & Subtitle */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-950 dark:bg-sky-600 text-white flex items-center justify-center shadow-md shadow-blue-950/20 dark:shadow-sky-600/20 shrink-0">
+              <Sparkles className="w-5 h-5 text-sky-400 dark:text-white" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-extrabold text-blue-950 dark:text-white tracking-tight">
                 AI Study Assistant
               </h2>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Gemini 3.8 Flash Connected</span>
-              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                Ask anything. Learn at your own pace.
+              </p>
             </div>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Ask anything. Learn at your own pace.
-            </p>
+          </div>
+
+          {/* Primary Action Buttons: Neatly Organized History & New Chat */}
+          <div className="flex items-center gap-2 sm:gap-2.5 self-start sm:self-auto">
+            <button
+              onClick={onNavigateHistory}
+              title="View all saved conversations"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-[#0a1526] hover:bg-sky-50 dark:hover:bg-sky-950/50 text-blue-950 dark:text-sky-300 hover:text-sky-600 dark:hover:text-sky-200 border border-sky-200 dark:border-sky-900/60 text-xs font-bold shadow-2xs hover:shadow-xs transition-all active:scale-95"
+            >
+              <History className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+              <span>Chat history</span>
+            </button>
+
+            <button
+              onClick={handleStartNewChat}
+              title="Start a fresh chat conversation"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 active:scale-95 text-white text-xs font-bold shadow-sm shadow-blue-950/20 dark:shadow-sky-600/20 transition-all shrink-0 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>+ New chat</span>
+            </button>
           </div>
         </div>
 
-        {/* Right Side: Clean Organized Control Bar */}
-        <div className="flex items-center flex-wrap sm:flex-nowrap gap-2 sm:gap-2.5">
+        {/* Row 2: Status Indicator and Language Mode Toolbar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+          {/* AI Connection Status Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sky-50/80 dark:bg-[#0a1526] border border-sky-100 dark:border-sky-950/80 text-[11px] font-semibold text-slate-700 dark:text-slate-300 self-start md:self-auto">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="text-slate-500 dark:text-slate-400">Status:</span>
+            <span className="font-bold text-blue-950 dark:text-sky-400">Gemini 3.8 Flash Connected</span>
+          </div>
+
           {/* Segmented Language Selector */}
-          <div className="inline-flex items-center bg-purple-50/70 p-1 rounded-xl border border-purple-100 text-xs">
-            <Languages className="w-3.5 h-3.5 text-purple-600 mx-1.5 shrink-0" />
-            <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
+            <div className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-semibold mr-1">
+              <Languages className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+              <span>Language:</span>
+            </div>
+            <div className="inline-flex items-center bg-slate-50 dark:bg-[#081220] p-1 rounded-xl border border-sky-100/90 dark:border-sky-950/80 text-xs">
               {(
                 [
-                  { id: 'Simple English', label: 'English' },
+                  { id: 'Simple English', label: 'Simple English' },
                   { id: 'Telugu', label: 'తెలుగు' },
-                  { id: 'Telugu + English', label: 'Telugu + Eng' },
+                  { id: 'Telugu + English', label: 'Telugu + English' },
                 ] as const
               ).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setLanguageMode(item.id)}
-                  title={`Switch language mode to ${item.id}`}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  title={`Switch response language mode to ${item.id}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     languageMode === item.id
-                      ? 'bg-purple-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-purple-700 hover:bg-purple-100/50'
+                      ? 'bg-blue-950 dark:bg-sky-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-blue-950 dark:hover:text-white hover:bg-sky-100/60 dark:hover:bg-sky-950/50'
                   }`}
                 >
                   {item.label}
@@ -366,40 +394,19 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
               ))}
             </div>
           </div>
-
-          {/* Action Buttons: Chat History & New Chat */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onNavigateHistory}
-              title="View all saved conversations"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-purple-200/80 text-xs font-bold shadow-2xs transition-all active:scale-95"
-            >
-              <History className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-              <span>History</span>
-            </button>
-
-            <button
-              onClick={handleStartNewChat}
-              title="Start a fresh chat conversation"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-bold shadow-sm shadow-purple-600/20 transition-all shrink-0"
-            >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>New chat</span>
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Mic error notice */}
       {micError && (
-        <div className="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-between">
+        <div className="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>{micError}</span>
           </div>
           <button
             onClick={() => setMicError(null)}
-            className="text-amber-700 hover:text-amber-900 font-bold px-2"
+            className="text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 font-bold px-2 cursor-pointer"
           >
             Dismiss
           </button>
@@ -411,13 +418,13 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         {messages.length === 0 ? (
           /* Empty State with Prompt Starters */
           <div className="py-8 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-100 to-indigo-50 border border-purple-200 flex items-center justify-center text-purple-600 shadow-xs mb-4">
-              <Brain className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-100 to-blue-50 dark:from-slate-800 dark:to-slate-900 border border-sky-200 dark:border-slate-700 flex items-center justify-center text-blue-950 dark:text-sky-400 shadow-xs mb-4">
+              <Brain className="w-8 h-8 text-sky-600 dark:text-sky-400" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 tracking-tight">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
               What would you like to master today?
             </h3>
-            <p className="text-xs text-slate-500 max-w-md mt-1 mb-8">
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mt-1 mb-8">
               StudyMind AI provides personalized explanations, code examples, homework assistance, and conceptual deep-dives.
             </p>
 
@@ -428,17 +435,17 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(item.prompt)}
-                    className="p-4 rounded-2xl bg-white hover:bg-purple-50/60 border border-purple-100 hover:border-purple-300 text-slate-700 shadow-2xs hover:shadow-xs transition-all group flex flex-col justify-between"
+                    className="p-4 rounded-2xl bg-white dark:bg-[#0c1829] hover:bg-sky-50/60 dark:hover:bg-sky-950/40 border border-sky-100 dark:border-sky-950/80 hover:border-sky-300 dark:hover:border-sky-800 text-slate-700 dark:text-slate-200 shadow-2xs hover:shadow-xs transition-all group flex flex-col justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-6 h-6 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center text-xs">
-                        <Icon className="w-3.5 h-3.5" />
+                      <div className="w-6 h-6 rounded-md bg-sky-100 dark:bg-sky-950 text-blue-950 dark:text-sky-300 flex items-center justify-center text-xs">
+                        <Icon className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                       </div>
-                      <span className="text-[11px] font-bold text-purple-700 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wider">
                         {item.category}
                       </span>
                     </div>
-                    <p className="text-xs font-medium text-slate-700 group-hover:text-purple-900 leading-relaxed">
+                    <p className="text-xs font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-950 dark:group-hover:text-sky-300 leading-relaxed">
                       "{item.prompt}"
                     </p>
                   </button>
@@ -456,16 +463,16 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
               >
                 {!isUser && (
-                  <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-blue-950 dark:bg-sky-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                    <Sparkles className="w-4 h-4 text-sky-400 dark:text-white" />
                   </div>
                 )}
 
                 <div
                   className={`max-w-[85%] sm:max-w-[78%] rounded-2xl p-4 shadow-xs text-sm ${
                     isUser
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-tr-none'
-                      : 'bg-white text-slate-800 border border-purple-100/90 rounded-tl-none prose-chat'
+                      ? 'bg-gradient-to-r from-blue-950 to-sky-700 dark:from-sky-600 dark:to-blue-900 text-white rounded-tr-none'
+                      : 'bg-white dark:bg-[#0c1829] text-slate-800 dark:text-slate-100 border border-sky-100/90 dark:border-sky-950/80 rounded-tl-none prose-chat'
                   }`}
                 >
                   {/* Bubble Content */}
@@ -477,8 +484,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                   <div
                     className={`flex items-center justify-between gap-3 mt-2.5 pt-2 border-t ${
                       isUser
-                        ? 'border-purple-400/40 text-purple-100 text-[11px]'
-                        : 'border-slate-100 text-slate-400 text-[11px]'
+                        ? 'border-sky-400/40 text-sky-100 text-[11px]'
+                        : 'border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 text-[11px]'
                     }`}
                   >
                     <span>{message.timestamp}</span>
@@ -489,12 +496,12 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                         <button
                           onClick={() => handleCopy(message.content, message.id)}
                           title="Copy Answer"
-                          className="hover:text-purple-600 flex items-center gap-1 transition-colors"
+                          className="hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1 transition-colors cursor-pointer"
                         >
                           {copiedId === message.id ? (
                             <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span className="text-emerald-600 font-semibold">Copied</span>
+                              <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Copied</span>
                             </>
                           ) : (
                             <>
@@ -508,13 +515,13 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                         <button
                           onClick={() => handleSpeak(message.content, message.id)}
                           title="Read Aloud"
-                          className={`hover:text-purple-600 flex items-center gap-1 transition-colors ${
-                            speakingMessageId === message.id ? 'text-purple-600 font-bold' : ''
+                          className={`hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1 transition-colors cursor-pointer ${
+                            speakingMessageId === message.id ? 'text-sky-600 dark:text-sky-400 font-bold' : ''
                           }`}
                         >
                           {speakingMessageId === message.id ? (
                             <>
-                              <VolumeX className="w-3.5 h-3.5 animate-pulse text-purple-600" />
+                              <VolumeX className="w-3.5 h-3.5 animate-pulse text-sky-600 dark:text-sky-400" />
                               <span>Stop</span>
                             </>
                           ) : (
@@ -530,7 +537,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 </div>
 
                 {isUser && (
-                  <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 shadow-2xs">
+                  <div className="w-8 h-8 rounded-xl bg-sky-100 dark:bg-sky-900/60 text-blue-950 dark:text-sky-300 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 shadow-2xs">
                     {currentUser.displayName ? currentUser.displayName[0] : 'U'}
                   </div>
                 )}
@@ -542,16 +549,16 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         {/* Loading Indicator */}
         {isLoading && (
           <div className="flex gap-3 justify-start items-center">
-            <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs shrink-0">
-              <Sparkles className="w-4 h-4 animate-spin" />
+            <div className="w-8 h-8 rounded-xl bg-blue-950 dark:bg-sky-600 text-white flex items-center justify-center shadow-xs shrink-0">
+              <Sparkles className="w-4 h-4 text-sky-400 dark:text-white animate-spin" />
             </div>
-            <div className="bg-white rounded-2xl p-4 border border-purple-100 shadow-xs flex items-center gap-3">
+            <div className="bg-white dark:bg-[#0c1829] rounded-2xl p-4 border border-sky-100 dark:border-sky-950/80 shadow-xs flex items-center gap-3">
               <div className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-purple-600 animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 rounded-full bg-purple-300 animate-bounce" style={{ animationDelay: '300ms' }} />
+                <span className="w-2 h-2 rounded-full bg-blue-950 dark:bg-sky-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 rounded-full bg-sky-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 rounded-full bg-sky-300 animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
-              <span className="text-xs text-slate-500 font-medium">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 StudyMind AI is synthesizing your study answer...
               </span>
             </div>
@@ -560,14 +567,14 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
         {/* Error notification with retry */}
         {errorMessage && (
-          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               <span>{errorMessage}</span>
             </div>
             <button
               onClick={() => handleRegenerate()}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shrink-0 self-start sm:self-auto flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shrink-0 self-start sm:self-auto flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Retry</span>
@@ -579,16 +586,16 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className="bg-white rounded-2xl p-3 border border-purple-100/90 shadow-sm">
+      <div className="bg-white dark:bg-[#0c1829] rounded-2xl p-3 border border-sky-100/90 dark:border-sky-950/80 shadow-sm transition-colors">
         <div className="relative flex items-end gap-2">
           {/* Voice Input Button */}
           <button
             onClick={toggleVoiceInput}
             title={isListening ? 'Stop listening' : 'Speak your question'}
-            className={`p-2.5 rounded-xl transition-all ${
+            className={`p-2.5 rounded-xl transition-all cursor-pointer ${
               isListening
                 ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/30'
-                : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'
+                : 'text-slate-400 dark:text-slate-500 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40'
             }`}
           >
             {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
@@ -599,7 +606,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             <button
               onClick={handleRegenerate}
               title="Regenerate last response"
-              className="p-2.5 rounded-xl text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+              className="p-2.5 rounded-xl text-slate-400 dark:text-slate-500 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -619,27 +626,27 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 ? 'మీ సందేహాన్ని ఇక్కడ టైప్ చేయండి... (Enter to send)'
                 : 'Ask a question, paste code, or request an explanation... (Enter to send, Shift+Enter for new line)'
             }
-            className="flex-1 max-h-32 min-h-[2.5rem] py-2 px-3 bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden resize-none font-medium"
+            className="flex-1 max-h-32 min-h-[2.5rem] py-2 px-3 bg-transparent text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden resize-none font-medium"
           />
 
           {/* Send Button */}
           <button
             disabled={!inputPrompt.trim() || isLoading}
             onClick={() => handleSendMessage()}
-            className={`p-2.5 rounded-xl transition-all shadow-xs ${
+            className={`p-2.5 rounded-xl transition-all shadow-xs cursor-pointer ${
               inputPrompt.trim() && !isLoading
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20'
-                : 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                ? 'bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white shadow-blue-950/20 dark:shadow-sky-600/20'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
             }`}
           >
             <Send className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
+        <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-2 px-1">
           <div className="flex items-center gap-1.5">
             <span>Mode:</span>
-            <span className="font-semibold text-purple-600">{languageMode}</span>
+            <span className="font-semibold text-sky-600 dark:text-sky-400">{languageMode}</span>
           </div>
           <span>Shift + Enter for new line • Enter to send</span>
         </div>

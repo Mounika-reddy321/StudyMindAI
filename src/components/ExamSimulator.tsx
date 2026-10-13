@@ -189,17 +189,17 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
       {!examActive ? (
         /* Configuration View */
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-purple-100 shadow-sm space-y-6">
+          <div className="bg-white dark:bg-[#0c1829] rounded-3xl p-6 sm:p-8 border border-sky-100 dark:border-sky-950/80 shadow-sm space-y-6 transition-colors">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
-                  <GraduationCap className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-xl bg-blue-950 dark:bg-sky-600 text-white flex items-center justify-center shadow-xs">
+                  <GraduationCap className="w-4 h-4 text-sky-400 dark:text-white" />
                 </div>
-                <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                <h2 className="text-xl font-extrabold text-blue-950 dark:text-white tracking-tight">
                   Interactive Exam Simulator
                 </h2>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Generate real multiple-choice exam sessions powered by Gemini with custom difficulty and instant performance analytics.
               </p>
             </div>
@@ -207,33 +207,33 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
             {/* Config Inputs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Subject</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Subject</label>
                 <input
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="e.g., Computer Science, Indian Polity, Physics..."
-                  className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-purple-400/30"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#081220] rounded-xl border border-slate-200 dark:border-sky-950 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-2 focus:ring-sky-400/30"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Specific Topic</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Specific Topic</label>
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="e.g., Binary Search Trees, Preamble & Articles, Thermodynamics..."
-                  className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-purple-400/30"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#081220] rounded-xl border border-slate-200 dark:border-sky-950 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-hidden focus:ring-2 focus:ring-sky-400/30"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Difficulty Level</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Difficulty Level</label>
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value as any)}
-                  className="w-full px-3 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-purple-400/30"
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-[#081220] rounded-xl border border-slate-200 dark:border-sky-950 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-sky-400/30"
                 >
                   <option value="Easy">Easy (Conceptual & Fundamentals)</option>
                   <option value="Medium">Medium (Application & Standard Exam)</option>
@@ -242,11 +242,11 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Question Count</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Question Count</label>
                 <select
                   value={questionCount}
                   onChange={(e) => setQuestionCount(parseInt(e.target.value, 10))}
-                  className="w-full px-3 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-purple-400/30"
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-[#081220] rounded-xl border border-slate-200 dark:border-sky-950 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-sky-400/30"
                 >
                   <option value={5}>5 Questions (Quick Test)</option>
                   <option value={10}>10 Questions (Standard Quiz)</option>
@@ -257,23 +257,23 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
 
             {/* Error notice */}
             {generationError && (
-              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                 <span>{generationError}</span>
               </div>
             )}
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end">
               <button
                 onClick={handleStartExam}
                 disabled={isGenerating || !subject.trim() || !topic.trim()}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-extrabold transition-all shadow-sm ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-extrabold transition-all shadow-sm cursor-pointer ${
                   isGenerating || !subject.trim() || !topic.trim()
-                    ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                    : 'bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white shadow-blue-950/20 dark:shadow-sky-600/20'
                 }`}
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 text-sky-400 dark:text-white" />
                 <span>{isGenerating ? 'Generating Exam with Gemini...' : 'Start Exam Simulator'}</span>
               </button>
             </div>
@@ -281,10 +281,10 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
 
           {/* Past Exam History */}
           {attempts.length > 0 && (
-            <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-[#0c1829] rounded-3xl p-6 border border-sky-100 dark:border-sky-950/80 shadow-sm space-y-4 transition-colors">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-purple-600" />
+                <h3 className="text-sm font-extrabold text-blue-950 dark:text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                   <span>Your Test History ({attempts.length})</span>
                 </h3>
               </div>
@@ -293,17 +293,17 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                 {attempts.slice(0, 5).map((att) => (
                   <div
                     key={att.id}
-                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between"
+                    className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#081220] border border-slate-100 dark:border-sky-950 flex items-center justify-between"
                   >
                     <div>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-100">
                         <span>{att.subject}:</span>
-                        <span className="text-purple-700 font-semibold">{att.topic}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold">
+                        <span className="text-sky-700 dark:text-sky-400 font-semibold">{att.topic}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
                           {att.difficulty}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                         {new Date(att.completedAt).toLocaleDateString([], {
                           month: 'short',
                           day: 'numeric',
@@ -313,10 +313,10 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                     </div>
 
                     <div className="text-right">
-                      <div className="text-sm font-extrabold text-purple-700">
+                      <div className="text-sm font-extrabold text-blue-950 dark:text-sky-300">
                         {att.score} / {att.total} ({att.percentage}%)
                       </div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                         {att.percentage >= 80 ? 'Mastered' : att.percentage >= 50 ? 'Passed' : 'Needs Review'}
                       </span>
                     </div>
@@ -328,27 +328,27 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
         </div>
       ) : (
         /* Active Test or Review View */
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-purple-100 shadow-sm space-y-6">
+        <div className="bg-white dark:bg-[#0c1829] rounded-3xl p-6 sm:p-8 border border-sky-100 dark:border-sky-950/80 shadow-sm space-y-6 transition-colors">
           {/* Test Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-purple-100">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-sky-100 dark:border-sky-950/80">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase">
+              <div className="flex items-center gap-2 text-xs font-bold text-sky-700 dark:text-sky-400 uppercase">
                 <span>{subject}</span>
                 <span>•</span>
                 <span>{difficulty} Difficulty</span>
               </div>
-              <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-lg font-extrabold text-blue-950 dark:text-white tracking-tight">
                 {topic}
               </h2>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 text-purple-700 font-mono text-xs font-bold border border-purple-100">
-                <Clock className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-[#081220] text-sky-800 dark:text-sky-300 font-mono text-xs font-bold border border-sky-100 dark:border-sky-950">
+                <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                 <span>{formatTime(secondsElapsed)}</span>
               </div>
 
-              <div className="text-xs font-bold text-slate-500">
+              <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
             </div>
@@ -358,8 +358,8 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
             /* Active Interactive Question View */
             <div className="space-y-6">
               {/* Question Text */}
-              <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-100">
-                <p className="text-base font-bold text-slate-900 leading-relaxed">
+              <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-[#081220] border border-sky-100 dark:border-sky-950">
+                <p className="text-base font-bold text-slate-900 dark:text-white leading-relaxed">
                   {currentQ?.question}
                 </p>
               </div>
@@ -374,17 +374,17 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                     <button
                       key={optIdx}
                       onClick={() => handleSelectOption(currentQuestionIndex, optIdx)}
-                      className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-3 ${
+                      className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-3 cursor-pointer ${
                         isSelected
-                          ? 'bg-purple-600 text-white border-purple-600 shadow-sm shadow-purple-600/20'
-                          : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'
+                          ? 'bg-blue-950 dark:bg-sky-600 text-white border-blue-950 dark:border-sky-500 shadow-sm shadow-blue-950/20 dark:shadow-sky-600/20'
+                          : 'bg-white dark:bg-[#0c1829] hover:bg-sky-50/50 dark:hover:bg-sky-950/30 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-sky-950'
                       }`}
                     >
                       <span
                         className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
                           isSelected
-                            ? 'bg-white/20 text-white'
-                            : 'bg-slate-100 text-slate-600'
+                            ? 'bg-sky-500 dark:bg-white dark:text-sky-900 text-white'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         {letter}
@@ -396,16 +396,16 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
               </div>
 
               {/* Question Navigation Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={() =>
                     setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))
                   }
                   disabled={currentQuestionIndex === 0}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     currentQuestionIndex === 0
-                      ? 'text-slate-300 cursor-not-allowed'
-                      : 'text-purple-700 hover:bg-purple-50 border border-purple-200'
+                      ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                      : 'text-blue-950 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/50 border border-sky-200 dark:border-sky-900/60'
                   }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -419,7 +419,7 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                         Math.min(questions.length - 1, prev + 1)
                       )
                     }
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-xs"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <span>Next Question</span>
                     <ChevronRight className="w-4 h-4" />
@@ -427,7 +427,7 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                 ) : (
                   <button
                     onClick={handleSubmitExam}
-                    className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-sm"
+                    className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-sm cursor-pointer"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Submit Exam</span>
@@ -448,16 +448,16 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                 const pct = Math.round((score / total) * 100);
 
                 return (
-                  <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md shadow-purple-600/20">
+                  <div className="p-6 rounded-3xl bg-gradient-to-r from-blue-950 via-slate-900 to-sky-700 dark:from-slate-900 dark:via-sky-950 dark:to-blue-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md shadow-blue-950/20">
                     <div className="flex items-center gap-4 text-center sm:text-left">
-                      <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center font-extrabold text-2xl">
+                      <div className="w-16 h-16 rounded-2xl bg-white/10 text-sky-300 flex items-center justify-center font-extrabold text-2xl">
                         <Award className="w-8 h-8" />
                       </div>
                       <div>
                         <h3 className="text-xl font-extrabold">
                           Exam Completed!
                         </h3>
-                        <p className="text-xs text-purple-100 mt-0.5">
+                        <p className="text-xs text-sky-100 mt-0.5">
                           Completed in {formatTime(secondsElapsed)} with {score} of {total} correct answers.
                         </p>
                       </div>
@@ -475,7 +475,7 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
 
               {/* Review Question by Question */}
               <div className="space-y-4">
-                <h3 className="text-sm font-extrabold text-slate-900">
+                <h3 className="text-sm font-extrabold text-blue-950 dark:text-white">
                   Comprehensive Question Analysis
                 </h3>
 
@@ -488,21 +488,21 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                       key={q.id}
                       className={`p-5 rounded-2xl border ${
                         isCorrect
-                          ? 'bg-emerald-50/40 border-emerald-200'
-                          : 'bg-rose-50/40 border-rose-200'
+                          ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/60'
+                          : 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60'
                       } space-y-3`}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm font-bold text-slate-900">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">
                           {idx + 1}. {q.question}
                         </p>
                         {isCorrect ? (
-                          <span className="flex items-center gap-1 text-xs font-bold text-emerald-700 shrink-0">
+                          <span className="flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
                             <CheckCircle2 className="w-4 h-4" />
                             Correct
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-xs font-bold text-rose-700 shrink-0">
+                          <span className="flex items-center gap-1 text-xs font-bold text-rose-700 dark:text-rose-400 shrink-0">
                             <XCircle className="w-4 h-4" />
                             Incorrect
                           </span>
@@ -514,11 +514,11 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                           const isOptionCorrect = optIdx === q.correctIndex;
                           const wasChosen = chosen === optIdx;
 
-                          let bg = 'bg-white text-slate-700 border-slate-200';
+                          let bg = 'bg-white dark:bg-[#0c1829] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-sky-950';
                           if (isOptionCorrect) {
-                            bg = 'bg-emerald-100 text-emerald-900 font-bold border-emerald-300';
+                            bg = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 font-bold border-emerald-300 dark:border-emerald-800';
                           } else if (wasChosen && !isOptionCorrect) {
-                            bg = 'bg-rose-100 text-rose-900 font-bold border-rose-300 line-through';
+                            bg = 'bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 font-bold border-rose-300 dark:border-rose-800 line-through';
                           }
 
                           return (
@@ -530,7 +530,7 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                                 {String.fromCharCode(65 + optIdx)}. {opt}
                               </span>
                               {isOptionCorrect && (
-                                <span className="text-[10px] font-bold text-emerald-800 uppercase">
+                                <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase">
                                   Correct Key
                                 </span>
                               )}
@@ -540,8 +540,8 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
                       </div>
 
                       {/* Explanation */}
-                      <div className="p-3 bg-white rounded-xl border border-purple-100 text-xs text-slate-600 leading-relaxed">
-                        <strong className="text-purple-700">Explanation: </strong>
+                      <div className="p-3 bg-white dark:bg-[#0c1829] rounded-xl border border-sky-100 dark:border-sky-950/80 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <strong className="text-blue-950 dark:text-sky-300">Explanation: </strong>
                         {q.explanation}
                       </div>
                     </div>
@@ -550,16 +550,16 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({ currentUser }) => 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={handleExitExam}
-                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-bold transition-all"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-all cursor-pointer"
                 >
                   Configure New Topic
                 </button>
                 <button
                   onClick={handleRetakeExam}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-xs"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-950 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Retake This Exam</span>
